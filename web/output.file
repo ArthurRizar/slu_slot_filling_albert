@@ -1,0 +1,3 @@
+2019-12-13 14:50:41,453 - DEBUG - [205]connectionpool.py - Starting new HTTP connection (1): localhost:16378
+2019-12-13 14:50:42,015 - DEBUG - [393]connectionpool.py - http://localhost:16378 "POST /v1/models/default:predict HTTP/1.1" 200 468
+2019-12-13 14:50:42,017 - DEBUG - [54]selector_events.py - Using selector: EpollSelector

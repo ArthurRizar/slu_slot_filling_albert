@@ -28,8 +28,7 @@ def result_to_json(string, tags):
         idx += 1
     return item
 
-
-def bert_result_to_json(tokens, tags):
+def hard_bert_result_to_json(tokens, tags):
     item = {"string": ''.join(tokens), "entities": []}
     entity_name = ""
     entity_start = 0
@@ -40,7 +39,7 @@ def bert_result_to_json(tokens, tags):
         if tag[0] == "S":
             item["entities"].append({"word": token, "start": idx, "end": idx + 1, "type": tag[2: ]})
         elif tag[0] == "B":
-            entity_name += token
+            entity_name = token
             entity_start = idx
             flag = True
         elif tag[0] == "I" or tag[0] == 'M':
@@ -54,6 +53,38 @@ def bert_result_to_json(tokens, tags):
             entity_name = ""
             entity_start = idx
             flag = False
+        idx += 1               
+    return item    
+
+def bert_result_to_json(tokens, tags):
+    item = {"string": ''.join(tokens), "entities": []}
+    entity_name = ""
+    entity_start = 0
+
+    idx = 0
+    flag = False
+    last_tag = 'O'
+    for token, tag in zip(tokens, tags):
+        if tag[0] == "S":
+            item["entities"].append({"word": token, "start": idx, "end": idx + 1, "type": tag[2: ]})
+        elif tag[0] == "B":
+            entity_name += token
+            #entity_start = idx
+            if last_tag != 'B':
+                entity_start = idx
+            flag = True
+        elif tag[0] == "I" or tag[0] == 'M':
+            entity_name += token
+        elif tag[0] == "E" and flag:
+            entity_name += token
+            item["entities"].append({"word": entity_name, "start": entity_start, "end": idx + 1, "type": tag[2: ]})
+            entity_name = ""
+            flag = False
+        else:
+            entity_name = ""
+            entity_start = idx
+            flag = False
+        last_tag = tag
         idx += 1               
     return item    
 

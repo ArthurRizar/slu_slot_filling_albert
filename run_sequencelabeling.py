@@ -470,9 +470,9 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
             print("ln_type is postln or other,do nothing.")
     '''
 
-    loss, per_example_loss, logits, acc, pred_label_ids = inference(model, num_labels, is_training, labels, input_mask)
+    loss, per_example_loss, logits, acc, pred_label_ids, probabilities = inference(model, num_labels, is_training, labels, input_mask)
 
-    return (loss, per_example_loss, logits, pred_label_ids)
+    return (loss, per_example_loss, logits, pred_label_ids, probabilities)
 
 def project_layer(inputs, num_labels):
     #logits = tf.layers.dense(inputs, num_labels, activation=None, kernel_initializer=tf.truncated_normal_initializer(stddev=0.02))
@@ -518,7 +518,6 @@ def inference(model, num_labels, is_training, labels, input_mask, use_crf=True, 
 
     #projection
     logits = project_layer(output_layer, num_labels)
-    print('logits:', logits)
 
     one_hot_labels = tf.one_hot(labels, depth=num_labels, dtype=tf.float32)
     #use_crf = False
@@ -534,10 +533,7 @@ def inference(model, num_labels, is_training, labels, input_mask, use_crf=True, 
             loss = tf.reduce_mean(-log_likelihood)
             pred_label_ids, viterbi_score = tf.contrib.crf.crf_decode(logits, transition_params, mask2len)
             pred_label_ids = tf.identity(pred_label_ids, name='crf_pred_label_ids')
-            viterbi_score = tf.identity(viterbi_score, name='crf_probs')
-            print(loss)
-            print(pred_label_ids)
-            print(viterbi_score)
+            probabilities = tf.identity(viterbi_score, name='crf_probs')
         else:
             losses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=one_hot_labels)
             per_example_loss = losses
@@ -559,7 +555,7 @@ def inference(model, num_labels, is_training, labels, input_mask, use_crf=True, 
         acc = tf.reduce_mean(tf.cast(correct_pred, tf.float32), name='acc')
         loss = tf.identity(loss, name='loss')
 
-    return (loss, per_example_loss, logits, acc, pred_label_ids)
+    return (loss, per_example_loss, logits, acc, pred_label_ids, probabilities)
 
 
 def layer_norm(input_tensor, name=None):
@@ -596,7 +592,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
-        (total_loss, per_example_loss, logits, pred_label_ids) = create_model(
+        (total_loss, per_example_loss, logits, pred_label_ids, probabilities) = create_model(
                 bert_config, is_training, input_ids, input_mask, segment_ids, label_ids,
                 num_labels, use_one_hot_embeddings)
 

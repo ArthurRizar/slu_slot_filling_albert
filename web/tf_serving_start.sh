@@ -8,7 +8,7 @@
 source activate tensorflow_new_3.6
 
 export REST_API_PORT=16378
-export MODEL_DIR=$PWD/../output.1205_1e-4_base/checkpoints/
+export MODEL_DIR=$PWD/../output/checkpoints/
 export MODEL_NAME=default
 
 

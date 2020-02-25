@@ -52,7 +52,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint,
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
-        (total_loss, per_example_loss, logits, probabilities) = create_model(
+        (total_loss, per_example_loss, logits, pred_label_ids, probabilities) = create_model(
                 bert_config, is_training, input_ids, input_mask, segment_ids, label_ids,
                 num_labels, use_one_hot_embeddings)
 
@@ -73,7 +73,6 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint,
 
         output_spec = None
         if mode == tf.estimator.ModeKeys.PREDICT:
-            pred_label_ids = tf.argmax(logits, axis=-1, output_type=tf.int32)
             output_spec = tf.estimator.EstimatorSpec(
                         mode=mode,
                         predictions={"probabilities": probabilities,

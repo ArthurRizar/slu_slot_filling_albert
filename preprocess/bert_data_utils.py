@@ -130,6 +130,8 @@ def convert_online_example(example, max_seq_length, tokenizer):
     tokens = []
     for index, word in enumerate(text_list):
         token = tokenizer.tokenize(word)
+        if len(token) == 0:
+            token = [',']
         tokens.extend(token)
 
     if len(tokens) > max_seq_length - 2:

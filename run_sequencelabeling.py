@@ -472,7 +472,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
 
     loss, per_example_loss, logits, acc, pred_label_ids, probabilities = inference(model, num_labels, is_training, labels, input_mask)
 
-    return (loss, per_example_loss, logits, pred_label_ids, probabilities)
+    return (loss, per_example_loss, logits, pred_label_ids, probabilities, acc)
 
 def project_layer(inputs, num_labels):
     #logits = tf.layers.dense(inputs, num_labels, activation=None, kernel_initializer=tf.truncated_normal_initializer(stddev=0.02))
@@ -592,7 +592,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
-        (total_loss, per_example_loss, logits, pred_label_ids, probabilities) = create_model(
+        (total_loss, per_example_loss, logits, pred_label_ids, probabilities, acc) = create_model(
                 bert_config, is_training, input_ids, input_mask, segment_ids, label_ids,
                 num_labels, use_one_hot_embeddings)
 
@@ -626,11 +626,21 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
             train_op = optimization.create_optimizer(
                     total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
 
+            global_step = tf.train.get_or_create_global_step()
+            logged_tensors = {
+                    "global_step": global_step,
+                    "total_loss": total_loss,
+                    'acc': acc
+            }
+
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                     mode=mode,
                     loss=total_loss,
                     train_op=train_op,
-                    scaffold_fn=scaffold_fn)
+                    scaffold_fn=scaffold_fn,
+                    training_hooks=[
+                            tf.train.LoggingTensorHook(logged_tensors, every_n_iter=10)
+                    ])
         elif mode == tf.estimator.ModeKeys.EVAL:
 
             def metric_fn(per_example_loss, label_ids, logits, is_real_example):

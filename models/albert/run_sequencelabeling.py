@@ -18,20 +18,20 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
+import csv
 import codecs
 import shutil
+import random
 import collections
-import csv
-import os
 import numpy as np
 import tensorflow as tf
 
 
-import modeling
-import optimization_finetuning as optimization
-import tokenization
-import conlleval
-import random
+from . import modeling
+from . import optimization_finetuning as optimization
+from . import tokenization
+from . import conlleval
 
 # from loss import bi_tempered_logistic_loss
 

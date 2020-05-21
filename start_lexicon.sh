@@ -17,7 +17,7 @@ export EMBEDDING_FILE=embeddings/ctb.50d.vec
 #export EMBEDDING_FILE=embeddings/test.vec
 #export EMBEDDING_FILE=embeddings/gigaword_chn.all.a2b.uni.ite50.vec
 
-python -m models.lexicon_albert.run_sequencelabeling --task_name=ner \
+python -m models.soft_lexicon_albert.run_sequencelabeling --task_name=ner \
                          --output_dir=./output \
                          --data_dir=./data \
                          --init_checkpoint=$MODEL_DIR/albert_model.ckpt \

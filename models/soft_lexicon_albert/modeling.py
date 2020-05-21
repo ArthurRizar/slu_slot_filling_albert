@@ -18,15 +18,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import collections
 import copy
 import json
 import math
 import re
+import collections
 import numpy as np
 import six
 import tensorflow as tf
-import bert_utils
+from . import bert_utils
 
 class BertConfig(object):
     """Configuration for `BertModel`."""

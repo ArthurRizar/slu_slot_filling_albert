@@ -30,9 +30,9 @@ import tensorflow as tf
 
 sys.path.append('../../')
 
-import modeling
-import optimization_finetuning as optimization
-import tokenization
+from . import modeling
+from . import optimization_finetuning as optimization
+from . import tokenization
 
 from common.ner_utils import conlleval
 from common.strutil import gazetteer

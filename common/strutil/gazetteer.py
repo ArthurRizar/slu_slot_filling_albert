@@ -104,17 +104,21 @@ def pad_gaz_example(seq_len, input_gaz_layer, input_gaz_layer_mask, input_gaz_co
     for idx in range(seq_len):
         gaz_mask = []
         for flag_idx in range(4):
-            label_len = len(input_gaz_layer[idx][flag_idx])
+            label_len = min(len(input_gaz_layer[idx][flag_idx]), max_gaz_list)
             count_set = set(input_gaz_count[idx][flag_idx])
             if len(count_set) == 1 and 0 in count_set:
                 input_gaz_count[idx][flag_idx] = [1] * label_len
-
+            input_gaz_layer[idx][flag_idx] = input_gaz_layer[idx][flag_idx][: max_gaz_list]
+            input_gaz_count[idx][flag_idx] = input_gaz_count[idx][flag_idx][: max_gaz_list]
             input_gaz_layer[idx][flag_idx] += [0] * (max_gaz_list - label_len) # padding
             input_gaz_count[idx][flag_idx] += [0] * (max_gaz_list - label_len) # padding
 
             mask = [0] * label_len + [1] * (max_gaz_list - label_len)
             gaz_mask.append(mask)
         input_gaz_layer_mask.append(gaz_mask)
+
+    assert len(np.shape(input_gaz_layer)) == 3, np.array(input_gaz_layer)
+    assert len(np.shape(input_gaz_layer_mask)) == 3, np.array(input_gaz_layer_mask)
     assert not np.isnan(0 / np.sum(1 - np.array(input_gaz_layer_mask), -1)).any(), (
         np.where(0 / np.sum(1 - np.array(input_gaz_layer_mask), -1) == np.NAN), np.array(input_gaz_layer_mask))
 

@@ -232,12 +232,11 @@ class DataProcessor(object):
                 if len(line) == 0:
                     #input_gaz_layer, input_gaz_layer_mask, input_gaz_count = gazetteer.generate_gaz_example(words, gaz, gaz_count, gaz_alphabet)
                     input_gaz_layer, input_gaz_layer_mask, input_gaz_count = gazetteer.generate_gaz_example_by_threshold(
-                                                                    #words=['[CLS]'] + words[: FLAGS.max_seq_length - 2] + ['[SEP]'],
-                                                                    words=words,
+                                                                    words=['[CLS]'] + words[: FLAGS.max_seq_length - 2] + ['[SEP]'],
                                                                     gaz=gaz,
                                                                     gaz_count=gaz_count,
                                                                     gaz_alphabet=gaz_alphabet,
-                                                                    max_gaz_list=5,
+                                                                    max_gaz_list=8,
                                                                     max_seq_length=FLAGS.max_seq_length)
 
                     l = ' '.join([label for label in labels if len(label) > 0])
@@ -484,12 +483,12 @@ def file_based_input_fn_builder(input_file, seq_length, is_training,
                             'label_ids': [seq_length],
                             'is_real_example': [],
                             'input_gaz_shape': [3],
-                            #'input_gaz_layer': [None, 4, 5],
-                            'input_gaz_layer': [seq_length, 4, 5],
-                            #'input_gaz_layer_mask': [None, 4, 5],
-                            'input_gaz_layer_mask': [seq_length, 4, 5],
-                            #'input_gaz_count': [None, 4, 5]
-                            'input_gaz_count': [seq_length, 4, 5]
+                            #'input_gaz_layer': [None, 4, 8],
+                            'input_gaz_layer': [seq_length, 4, 8],
+                            #'input_gaz_layer_mask': [None, 4, 8],
+                            'input_gaz_layer_mask': [seq_length, 4, 8],
+                            #'input_gaz_count': [None, 4, 8]
+                            'input_gaz_count': [seq_length, 4, 8]
                            },
                 drop_remainder=drop_remainder)
         #d = d.batch(batch_size, drop_remainder=drop_remainder)
@@ -601,7 +600,7 @@ def concat_gaz_embeddings(gaz_pretrain_embeddings, input_gaz_layer, input_gaz_la
         batch_count_num = tf.reduce_sum(batch_count_num, axis=2, keep_dims=True)
 
         weights = tf.truediv(input_gaz_count, batch_count_num)
-        weights *= 4
+        #weights *= 4
         weights = tf.expand_dims(weights, axis=-1)
 
         gaz_embeddings = gaz_embeddings * weights
@@ -615,6 +614,7 @@ def concat_gaz_embeddings(gaz_pretrain_embeddings, input_gaz_layer, input_gaz_la
     gaz_embeddings = tf.reshape(gaz_embeddings, [-1, max_seq_length, num_gaz_class * embedding_dim])
 
     tf.check_numerics(gaz_embeddings, "gaz_embedding has nan or inf")
+    #gaz_embeddings = tf.layers.dense(gaz_embeddings, embedding_dim, activation=tf.nn.relu)
     outputs = tf.concat([bert_outputs, gaz_embeddings], axis=-1)
     #outputs = bert_outputs
 

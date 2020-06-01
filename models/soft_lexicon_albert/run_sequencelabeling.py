@@ -614,7 +614,9 @@ def concat_gaz_embeddings(gaz_pretrain_embeddings, input_gaz_layer, input_gaz_la
     gaz_embeddings = tf.reshape(gaz_embeddings, [-1, max_seq_length, num_gaz_class * embedding_dim])
 
     tf.check_numerics(gaz_embeddings, "gaz_embedding has nan or inf")
-    #gaz_embeddings = tf.layers.dense(gaz_embeddings, embedding_dim, activation=tf.nn.relu)
+    gaz_embeddings = tf.layers.dense(gaz_embeddings, embedding_dim, activation=tf.nn.relu)
+    #gaz_embeddings = tf.layers.dense(gaz_embeddings, embedding_dim)
+    #gaz_embeddings = tf.layers.dropout(gaz_embeddings, rate=0.2)
     outputs = tf.concat([bert_outputs, gaz_embeddings], axis=-1)
     #outputs = bert_outputs
 

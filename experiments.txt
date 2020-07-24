@@ -1,3 +1,24 @@
+epoch = 20, lr = 5e-4, softword_albert, only jieba, 82.54-83.95
+epoch = 20, lr = 5e-4, softword_albert, jieba + dict,
+epoch = 20, lr = 5e-4, softword_albert, only jieba, dense, 82.97-83.10 
+----------------------------------------------------
+epoch = 20, lr = 5e-4, social_media_albert(only cnn layer), only jieba, 82.7-84.24
+epoch = 20, lr = 5e-4, social_media_albert(only cnn layer), jieba + dict,
+
+
+----------------------------------------------------
+epoch = 20, lr = 5e-4, social_media_albert(cnn + attn), only jiebe, 83.18-83.61 
+
+----------------------------------------------------
+
+epoch = 20, lr = 5e-4, social_media_albert, only jiebe, 82.28-85.08
+epoch = 20, lr = 5e-4, social_media_albert, jiebe + dict, 81.41-84.03
+
+----------------------------------------------------
+epoch = 20, lr = 5e-4, albert, 82.5-83
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
 lr = 5e-5,  + bilstm + crf, epochs = 5, albert_tiny_model
 accuracy:  90.37%; precision:  83.85%; recall:  74.39%; FB1:  78.84
 LOCATION         :precision:  60.22%; recall:  70.44%; FB1:  64.93  372

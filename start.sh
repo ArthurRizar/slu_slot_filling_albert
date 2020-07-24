@@ -6,12 +6,12 @@
 # Created Time: 2019年10月31日 星期四 16时48分31秒
 #=============================================================
 source activate tensorflow_new_3.6
-#export MODEL_DIR=/root/zhaomeng/albert_test/pretrain_models/albert_tiny_489k
+export MODEL_DIR=/root/zhaomeng/albert_test/pretrain_models/albert_tiny_489k
 
 #export MODEL_DIR=/root/zhaomeng/albert_test/pretrain_models/albert_base_zh_additional_36k_steps
 #export MODEL_DIR=/root/zhaomeng/albert_test/pretrain_models/albert_small_zh_google
 
-export MODEL_DIR=/home/zhaomeng/albert_model/albert_tiny_489k
+#export MODEL_DIR=/home/zhaomeng/albert_model/albert_tiny_489k
 
 python -m models.albert.run_sequencelabeling --task_name=ner \
                          --output_dir=./output \
